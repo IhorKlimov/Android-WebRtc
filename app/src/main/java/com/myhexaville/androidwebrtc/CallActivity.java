@@ -167,7 +167,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
     // Controls
     private CallFragment callFragment;
     private HudFragment hudFragment;
-    private CpuMonitor cpuMonitor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -320,10 +319,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         // Create connection parameters.
         roomConnectionParameters = new RoomConnectionParameters(roomUri.toString(), roomId, loopback);
 
-        // Create CPU monitor
-        cpuMonitor = new CpuMonitor(this);
-        hudFragment.setCpuMonitor(cpuMonitor);
-
         // Send intent arguments to fragments.
         callFragment.setArguments(intent.getExtras());
         hudFragment.setArguments(intent.getExtras());
@@ -335,12 +330,7 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
 
         // For command line execution run connection for <runTimeMs> and exit.
         if (commandLineRun && runTimeMs > 0) {
-            (new Handler()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    disconnect();
-                }
-            }, runTimeMs);
+            (new Handler()).postDelayed(() -> disconnect(), runTimeMs);
         }
 
         peerConnectionClient = PeerConnectionClient.getInstance();
@@ -422,7 +412,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         if (peerConnectionClient != null && !screencaptureEnabled) {
             peerConnectionClient.stopVideoSource();
         }
-        cpuMonitor.pause();
     }
 
     @Override
@@ -433,7 +422,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         if (peerConnectionClient != null && !screencaptureEnabled) {
             peerConnectionClient.startVideoSource();
         }
-        cpuMonitor.resume();
     }
 
     @Override
@@ -458,12 +446,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         if (peerConnectionClient != null) {
             peerConnectionClient.switchCamera();
         }
-    }
-
-    @Override
-    public void onVideoScalingSwitch(ScalingType scalingType) {
-        this.scalingType = scalingType;
-        updateVideoView();
     }
 
     @Override
@@ -538,15 +520,8 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         // Store existing audio settings and change audio mode to
         // MODE_IN_COMMUNICATION for best possible VoIP performance.
         Log.d(TAG, "Starting the audio manager...");
-        audioManager.start(new AppRTCAudioManager.AudioManagerEvents() {
-            // This method will be called each time the number of available audio
-            // devices has changed.
-            @Override
-            public void onAudioDeviceChanged(
-                    AppRTCAudioManager.AudioDevice audioDevice, Set<AppRTCAudioManager.AudioDevice> availableAudioDevices) {
-                onAudioManagerDevicesChanged(audioDevice, availableAudioDevices);
-            }
-        });
+        audioManager.start((audioDevice, availableAudioDevices) ->
+                onAudioManagerDevicesChanged(audioDevice, availableAudioDevices));
     }
 
     // Should be called from UI thread
@@ -763,40 +738,31 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
 
     @Override
     public void onRemoteIceCandidate(final IceCandidate candidate) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (peerConnectionClient == null) {
-                    Log.e(TAG, "Received ICE candidate for a non-initialized peer connection.");
-                    return;
-                }
-                peerConnectionClient.addRemoteIceCandidate(candidate);
+        runOnUiThread(() -> {
+            if (peerConnectionClient == null) {
+                Log.e(TAG, "Received ICE candidate for a non-initialized peer connection.");
+                return;
             }
+            peerConnectionClient.addRemoteIceCandidate(candidate);
         });
     }
 
     @Override
     public void onRemoteIceCandidatesRemoved(final IceCandidate[] candidates) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (peerConnectionClient == null) {
-                    Log.e(TAG, "Received ICE candidate removals for a non-initialized peer connection.");
-                    return;
-                }
-                peerConnectionClient.removeRemoteIceCandidates(candidates);
+        runOnUiThread(() -> {
+            if (peerConnectionClient == null) {
+                Log.e(TAG, "Received ICE candidate removals for a non-initialized peer connection.");
+                return;
             }
+            peerConnectionClient.removeRemoteIceCandidates(candidates);
         });
     }
 
     @Override
     public void onChannelClose() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logAndToast("Remote end hung up; dropping PeerConnection");
-                disconnect();
-            }
+        runOnUiThread(() -> {
+            logAndToast("Remote end hung up; dropping PeerConnection");
+            disconnect();
         });
     }
 
@@ -812,45 +778,36 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
     @Override
     public void onLocalDescription(final SessionDescription sdp) {
         final long delta = System.currentTimeMillis() - callStartedTimeMs;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (appRtcClient != null) {
-                    logAndToast("Sending " + sdp.type + ", delay=" + delta + "ms");
-                    if (signalingParameters.initiator) {
-                        appRtcClient.sendOfferSdp(sdp);
-                    } else {
-                        appRtcClient.sendAnswerSdp(sdp);
-                    }
+        runOnUiThread(() -> {
+            if (appRtcClient != null) {
+                logAndToast("Sending " + sdp.type + ", delay=" + delta + "ms");
+                if (signalingParameters.initiator) {
+                    appRtcClient.sendOfferSdp(sdp);
+                } else {
+                    appRtcClient.sendAnswerSdp(sdp);
                 }
-                if (peerConnectionParameters.videoMaxBitrate > 0) {
-                    Log.d(TAG, "Set video maximum bitrate: " + peerConnectionParameters.videoMaxBitrate);
-                    peerConnectionClient.setVideoMaxBitrate(peerConnectionParameters.videoMaxBitrate);
-                }
+            }
+            if (peerConnectionParameters.videoMaxBitrate > 0) {
+                Log.d(TAG, "Set video maximum bitrate: " + peerConnectionParameters.videoMaxBitrate);
+                peerConnectionClient.setVideoMaxBitrate(peerConnectionParameters.videoMaxBitrate);
             }
         });
     }
 
     @Override
     public void onIceCandidate(final IceCandidate candidate) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (appRtcClient != null) {
-                    appRtcClient.sendLocalIceCandidate(candidate);
-                }
+        runOnUiThread(() -> {
+            if (appRtcClient != null) {
+                appRtcClient.sendLocalIceCandidate(candidate);
             }
         });
     }
 
     @Override
     public void onIceCandidatesRemoved(final IceCandidate[] candidates) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (appRtcClient != null) {
-                    appRtcClient.sendLocalIceCandidateRemovals(candidates);
-                }
+        runOnUiThread(() -> {
+            if (appRtcClient != null) {
+                appRtcClient.sendLocalIceCandidateRemovals(candidates);
             }
         });
     }
@@ -858,25 +815,19 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
     @Override
     public void onIceConnected() {
         final long delta = System.currentTimeMillis() - callStartedTimeMs;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logAndToast("ICE connected, delay=" + delta + "ms");
-                iceConnected = true;
-                callConnected();
-            }
+        runOnUiThread(() -> {
+            logAndToast("ICE connected, delay=" + delta + "ms");
+            iceConnected = true;
+            callConnected();
         });
     }
 
     @Override
     public void onIceDisconnected() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logAndToast("ICE disconnected");
-                iceConnected = false;
-                disconnect();
-            }
+        runOnUiThread(() -> {
+            logAndToast("ICE disconnected");
+            iceConnected = false;
+            disconnect();
         });
     }
 
@@ -886,12 +837,9 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
 
     @Override
     public void onPeerConnectionStatsReady(final StatsReport[] reports) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (!isError && iceConnected) {
-                    hudFragment.updateEncoderStatistics(reports);
-                }
+        runOnUiThread(() -> {
+            if (!isError && iceConnected) {
+                hudFragment.updateEncoderStatistics(reports);
             }
         });
     }

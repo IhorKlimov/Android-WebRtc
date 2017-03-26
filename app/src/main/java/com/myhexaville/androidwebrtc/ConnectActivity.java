@@ -220,11 +220,7 @@ public class ConnectActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items.
-        if (item.getItemId() == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        } else if (item.getItemId() == R.id.action_loopback) {
+        if (item.getItemId() == R.id.action_loopback) {
             connectToRoom(null, false, true, false, 0);
             return true;
         } else {

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.web_rtc;
 
 import android.util.Log;
 
@@ -35,7 +35,7 @@ public class DirectRTCClient implements AppRTCClient, TCPChannelClient.TCPChanne
     private static final int DEFAULT_PORT = 8888;
 
     // Regex pattern used for checking if room id looks like an IP.
-    static final Pattern IP_PATTERN = Pattern.compile("("
+   public static final Pattern IP_PATTERN = Pattern.compile("("
             // IPv4
             + "((\\d+\\.){3}\\d+)|"
             // IPv6

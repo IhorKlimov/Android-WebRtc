@@ -8,10 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.web_rtc;
 
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.myhexaville.androidwebrtc.R;
+import com.myhexaville.androidwebrtc.call.CallFragment;
 
 import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 

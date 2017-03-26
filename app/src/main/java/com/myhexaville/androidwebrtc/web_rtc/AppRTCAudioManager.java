@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.web_rtc;
 
 
 import android.content.BroadcastReceiver;
@@ -21,6 +21,7 @@ import android.media.AudioManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.util.AppRTCUtils;
 
 import org.webrtc.ThreadUtils;
@@ -167,7 +168,7 @@ public class AppRTCAudioManager {
     /**
      * Construction.
      */
-    static AppRTCAudioManager create(Context context) {
+  public  static AppRTCAudioManager create(Context context) {
         return new AppRTCAudioManager(context);
     }
 

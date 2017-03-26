@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.call;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -19,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.myhexaville.androidwebrtc.web_rtc.CaptureQualityController;
+import com.myhexaville.androidwebrtc.R;
 
 /**
  * Fragment for call control.

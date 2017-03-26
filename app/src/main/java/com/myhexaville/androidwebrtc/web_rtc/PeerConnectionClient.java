@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.web_rtc;
 
 import android.content.Context;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import com.myhexaville.androidwebrtc.AppRTCClient.SignalingParameters;
+import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.SignalingParameters;
 
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;

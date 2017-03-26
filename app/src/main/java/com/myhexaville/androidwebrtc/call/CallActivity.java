@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.call;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,10 +31,18 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
-import com.myhexaville.androidwebrtc.AppRTCClient.RoomConnectionParameters;
-import com.myhexaville.androidwebrtc.AppRTCClient.SignalingParameters;
-import com.myhexaville.androidwebrtc.PeerConnectionClient.DataChannelParameters;
-import com.myhexaville.androidwebrtc.PeerConnectionClient.PeerConnectionParameters;
+import com.myhexaville.androidwebrtc.web_rtc.AppRTCAudioManager;
+import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient;
+import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.RoomConnectionParameters;
+import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.SignalingParameters;
+import com.myhexaville.androidwebrtc.web_rtc.DirectRTCClient;
+import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient;
+import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.DataChannelParameters;
+import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.PeerConnectionParameters;
+import com.myhexaville.androidwebrtc.view.PercentFrameLayout;
+import com.myhexaville.androidwebrtc.R;
+import com.myhexaville.androidwebrtc.UnhandledExceptionHandler;
+import com.myhexaville.androidwebrtc.web_rtc.WebSocketRTCClient;
 
 import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
@@ -166,7 +174,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
 
     // Controls
     private CallFragment callFragment;
-    private HudFragment hudFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -195,15 +202,9 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         localRenderLayout = (PercentFrameLayout) findViewById(R.id.local_video_layout);
         remoteRenderLayout = (PercentFrameLayout) findViewById(R.id.remote_video_layout);
         callFragment = new CallFragment();
-        hudFragment = new HudFragment();
 
         // Show/hide call control fragment on view click.
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleCallControlFragmentVisibility();
-            }
-        };
+        View.OnClickListener listener = view -> toggleCallControlFragmentVisibility();
 
         localRender.setOnClickListener(listener);
         remoteRenderScreen.setOnClickListener(listener);
@@ -321,11 +322,9 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
 
         // Send intent arguments to fragments.
         callFragment.setArguments(intent.getExtras());
-        hudFragment.setArguments(intent.getExtras());
         // Activate call and HUD fragments and start the call.
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.add(R.id.call_fragment_container, callFragment);
-        ft.add(R.id.hud_fragment_container, hudFragment);
         ft.commit();
 
         // For command line execution run connection for <runTimeMs> and exit.
@@ -474,10 +473,8 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         if (callControlFragmentVisible) {
             ft.show(callFragment);
-            ft.show(hudFragment);
         } else {
             ft.hide(callFragment);
-            ft.hide(hudFragment);
         }
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
@@ -838,9 +835,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
     @Override
     public void onPeerConnectionStatsReady(final StatsReport[] reports) {
         runOnUiThread(() -> {
-            if (!isError && iceConnected) {
-                hudFragment.updateEncoderStatistics(reports);
-            }
         });
     }
 

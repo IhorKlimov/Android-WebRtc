@@ -8,10 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.main;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,10 +31,12 @@ import android.webkit.URLUtil;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.myhexaville.androidwebrtc.R;
+import com.myhexaville.androidwebrtc.call.CallActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,8 +50,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 /**
  * Handles the initial setup where the user selects which room to join.
  */
-public class ConnectActivity extends AppCompatActivity {
-    private static final String LOG_TAG = "ConnectActivity";
+public class MainActivity extends AppCompatActivity {
+    private static final String LOG_TAG = "MainActivity";
     private static final int CONNECTION_REQUEST = 1;
     private static final int REMOVE_FAVORITE_INDEX = 0;
     private static final int RC_CALL = 12312;

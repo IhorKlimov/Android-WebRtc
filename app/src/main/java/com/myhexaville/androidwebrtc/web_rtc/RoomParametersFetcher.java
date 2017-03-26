@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.web_rtc;
 
 
 import android.util.Log;
 
-import com.myhexaville.androidwebrtc.AppRTCClient.SignalingParameters;
+import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.SignalingParameters;
 import com.myhexaville.androidwebrtc.util.AsyncHttpURLConnection;
 import com.myhexaville.androidwebrtc.util.AsyncHttpURLConnection.AsyncHttpEvents;
 

@@ -8,15 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.web_rtc;
 
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
-import com.myhexaville.androidwebrtc.RoomParametersFetcher.RoomParametersFetcherEvents;
-import com.myhexaville.androidwebrtc.WebSocketChannelClient.WebSocketChannelEvents;
-import com.myhexaville.androidwebrtc.WebSocketChannelClient.WebSocketConnectionState;
+import com.myhexaville.androidwebrtc.web_rtc.RoomParametersFetcher.RoomParametersFetcherEvents;
 import com.myhexaville.androidwebrtc.util.AsyncHttpURLConnection;
 import com.myhexaville.androidwebrtc.util.AsyncHttpURLConnection.AsyncHttpEvents;
 
@@ -36,7 +34,7 @@ import org.webrtc.SessionDescription;
  * Messages to other party (with local Ice candidates and answer SDP) can
  * be sent after WebSocket connection is established.
  */
-public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents {
+public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelClient.WebSocketChannelEvents {
   private static final String TAG = "WSRTCClient";
   private static final String ROOM_JOIN = "join";
   private static final String ROOM_MESSAGE = "message";
@@ -282,7 +280,7 @@ public class WebSocketRTCClient implements AppRTCClient, WebSocketChannelEvents 
   // (passed to WebSocket client constructor).
   @Override
   public void onWebSocketMessage(final String msg) {
-    if (wsClient.getState() != WebSocketConnectionState.REGISTERED) {
+    if (wsClient.getState() != WebSocketChannelClient.WebSocketConnectionState.REGISTERED) {
       Log.e(TAG, "Got WebSocket message in non registered state.");
       return;
     }

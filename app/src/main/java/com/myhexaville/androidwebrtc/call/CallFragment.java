@@ -20,16 +20,14 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.myhexaville.androidwebrtc.web_rtc.CaptureQualityController;
 import com.myhexaville.androidwebrtc.R;
+import com.myhexaville.androidwebrtc.web_rtc.CaptureQualityController;
 
 /**
  * Fragment for call control.
  */
 public class CallFragment extends Fragment {
-    private View controlView;
     private TextView contactView;
-    private ImageButton disconnectButton;
     private ImageButton cameraSwitchButton;
     private ImageButton toggleMuteButton;
     private TextView captureFormatText;
@@ -53,37 +51,23 @@ public class CallFragment extends Fragment {
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        controlView = inflater.inflate(R.layout.fragment_call, container, false);
+        View controlView = inflater.inflate(R.layout.fragment_call, container, false);
 
-        // Create UI controls.
         contactView = (TextView) controlView.findViewById(R.id.contact_name_call);
-        disconnectButton = (ImageButton) controlView.findViewById(R.id.button_call_disconnect);
+        ImageButton disconnectButton = (ImageButton) controlView.findViewById(R.id.button_call_disconnect);
         cameraSwitchButton = (ImageButton) controlView.findViewById(R.id.button_call_switch_camera);
         toggleMuteButton = (ImageButton) controlView.findViewById(R.id.button_call_toggle_mic);
         captureFormatText = (TextView) controlView.findViewById(R.id.capture_format_text_call);
         captureFormatSlider = (SeekBar) controlView.findViewById(R.id.capture_format_slider_call);
 
         // Add buttons click events.
-        disconnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callEvents.onCallHangUp();
-            }
-        });
+        disconnectButton.setOnClickListener(view -> callEvents.onCallHangUp());
 
-        cameraSwitchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callEvents.onCameraSwitch();
-            }
-        });
+        cameraSwitchButton.setOnClickListener(view -> callEvents.onCameraSwitch());
 
-        toggleMuteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean enabled = callEvents.onToggleMic();
-                toggleMuteButton.setAlpha(enabled ? 1.0f : 0.3f);
-            }
+        toggleMuteButton.setOnClickListener(view -> {
+            boolean enabled = callEvents.onToggleMic();
+            toggleMuteButton.setAlpha(enabled ? 1.0f : 0.3f);
         });
 
         return controlView;

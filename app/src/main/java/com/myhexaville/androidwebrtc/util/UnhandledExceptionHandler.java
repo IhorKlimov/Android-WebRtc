@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc;
+package com.myhexaville.androidwebrtc.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;

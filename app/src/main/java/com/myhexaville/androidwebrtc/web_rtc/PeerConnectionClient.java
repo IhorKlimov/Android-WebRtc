@@ -1015,12 +1015,7 @@ public class PeerConnectionClient {
     }
 
     public void switchCamera() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                switchCameraInternal();
-            }
-        });
+        executor.execute(() -> switchCameraInternal());
     }
 
     public void changeCaptureFormat(final int width, final int height, final int framerate) {

@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.myhexaville.androidwebrtc.view.PercentFrameLayout
-        android:id="@+id/remote_video_layout"
+<layout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.webrtc.SurfaceViewRenderer
-            android:id="@+id/remote_video_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </com.myhexaville.androidwebrtc.view.PercentFrameLayout>
+        <com.myhexaville.androidwebrtc.view.PercentFrameLayout
+            android:id="@+id/remote_video_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <com.myhexaville.androidwebrtc.view.PercentFrameLayout
-        android:id="@+id/local_video_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <org.webrtc.SurfaceViewRenderer
+                android:id="@+id/remote_video_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </com.myhexaville.androidwebrtc.view.PercentFrameLayout>
 
-        <org.webrtc.SurfaceViewRenderer
-            android:id="@+id/local_video_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </com.myhexaville.androidwebrtc.view.PercentFrameLayout>
+        <com.myhexaville.androidwebrtc.view.PercentFrameLayout
+            android:id="@+id/local_video_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/call_fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            <org.webrtc.SurfaceViewRenderer
+                android:id="@+id/local_video_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </com.myhexaville.androidwebrtc.view.PercentFrameLayout>
 
-    <FrameLayout
-        android:id="@+id/hud_fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <FrameLayout
+            android:id="@+id/call_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-</RelativeLayout>
+        <FrameLayout
+            android:id="@+id/hud_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+
+</layout>

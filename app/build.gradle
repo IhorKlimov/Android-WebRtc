@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'me.tatarka.retrolambda'
-
 apply plugin: 'kotlin-android'
 
 buildscript {

@@ -400,22 +400,6 @@ public class AppRTCAudioManager {
     }
 
     /**
-     * Returns current set of available/selectable audio devices.
-     */
-    public Set<AudioDevice> getAudioDevices() {
-        ThreadUtils.checkIsOnMainThread();
-        return Collections.unmodifiableSet(new HashSet<AudioDevice>(audioDevices));
-    }
-
-    /**
-     * Returns the currently selected audio device.
-     */
-    public AudioDevice getSelectedAudioDevice() {
-        ThreadUtils.checkIsOnMainThread();
-        return selectedAudioDevice;
-    }
-
-    /**
      * Helper method for receiver registration.
      */
     private void registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {

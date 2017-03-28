@@ -11,7 +11,6 @@
 package com.myhexaville.androidwebrtc.main;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -19,7 +18,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.webkit.URLUtil;
 
 import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.call.CallActivity;
@@ -43,22 +41,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Get setting keys.
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.connectButton.setOnClickListener(v -> connect());
-
         binding.roomEdittext.requestFocus();
-
-        // If an implicit VIEW intent is launching the app, go directly to that URL.
-        final Intent intent = getIntent();
-        if ("android.intent.action.VIEW".equals(intent.getAction()) && !commandLineRun) {
-            boolean loopback = intent.getBooleanExtra(CallActivity.EXTRA_LOOPBACK, false);
-            boolean useValuesFromIntent =
-                    intent.getBooleanExtra(CallActivity.EXTRA_USE_VALUES_FROM_INTENT, false);
-            connectToRoom(null, true, loopback, useValuesFromIntent);
-        }
     }
 
     @Override
@@ -77,8 +63,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void connectToRoom(String roomId, boolean commandLineRun, boolean loopback,
-                               boolean useValuesFromIntent) {
+    @AfterPermissionGranted(RC_CALL)
+    private void connect() {
+        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            connectToRoom(binding.roomEdittext.getText().toString(), false, false);
+        } else {
+            EasyPermissions.requestPermissions(this, "Need some permissions", RC_CALL, perms);
+        }
+    }
+
+    private void connectToRoom(String roomId, boolean commandLineRun, boolean loopback) {
         MainActivity.commandLineRun = commandLineRun;
 
         // roomId is random for loopback.
@@ -90,60 +85,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Start AppRTCMobile activity.
         Log.d(LOG_TAG, "Connecting to room " + roomId + " at URL " + roomUrl);
-        if (validateUrl(roomUrl)) {
-            Uri uri = Uri.parse(roomUrl);
-            Intent intent = new Intent(this, CallActivity.class);
-            intent.setData(uri);
-            intent.putExtra(CallActivity.EXTRA_ROOMID, roomId);
-            intent.putExtra(CallActivity.EXTRA_LOOPBACK, loopback);
-            intent.putExtra(CallActivity.EXTRA_CMDLINE, commandLineRun);
+        Uri uri = Uri.parse(roomUrl);
+        Intent intent = new Intent(this, CallActivity.class);
+        intent.setData(uri);
+        intent.putExtra(CallActivity.EXTRA_ROOMID, roomId);
+        intent.putExtra(CallActivity.EXTRA_LOOPBACK, loopback);
+        intent.putExtra(CallActivity.EXTRA_CMDLINE, commandLineRun);
 
-            if (useValuesFromIntent) {
-                if (getIntent().hasExtra(CallActivity.EXTRA_VIDEO_FILE_AS_CAMERA)) {
-                    String videoFileAsCamera =
-                            getIntent().getStringExtra(CallActivity.EXTRA_VIDEO_FILE_AS_CAMERA);
-                    intent.putExtra(CallActivity.EXTRA_VIDEO_FILE_AS_CAMERA, videoFileAsCamera);
-                }
-
-                if (getIntent().hasExtra(CallActivity.EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_WIDTH)) {
-                    int videoOutWidth =
-                            getIntent().getIntExtra(CallActivity.EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_WIDTH, 0);
-                    intent.putExtra(CallActivity.EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_WIDTH, videoOutWidth);
-                }
-
-                if (getIntent().hasExtra(CallActivity.EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_HEIGHT)) {
-                    int videoOutHeight =
-                            getIntent().getIntExtra(CallActivity.EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_HEIGHT, 0);
-                    intent.putExtra(CallActivity.EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_HEIGHT, videoOutHeight);
-                }
-            }
-
-            startActivityForResult(intent, CONNECTION_REQUEST);
-        }
-    }
-
-    private boolean validateUrl(String url) {
-        if (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) {
-            return true;
-        }
-
-        new AlertDialog.Builder(this)
-                .setTitle(getText(R.string.invalid_url_title))
-                .setMessage(getString(R.string.invalid_url_text, url))
-                .setCancelable(false)
-                .setNeutralButton(R.string.ok, (dialog, id) -> dialog.cancel())
-                .create()
-                .show();
-        return false;
-    }
-
-    @AfterPermissionGranted(RC_CALL)
-    private void connect() {
-        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            connectToRoom(binding.roomEdittext.getText().toString(), false, false, false);
-        } else {
-            EasyPermissions.requestPermissions(this, "Need some permissions", RC_CALL, perms);
-        }
+        startActivityForResult(intent, CONNECTION_REQUEST);
     }
 }

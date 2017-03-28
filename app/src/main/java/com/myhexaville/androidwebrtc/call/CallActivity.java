@@ -37,6 +37,7 @@ import com.myhexaville.androidwebrtc.web_rtc.AppRTCAudioManager;
 import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient;
 import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.RoomConnectionParameters;
 import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.SignalingParameters;
+import com.myhexaville.androidwebrtc.web_rtc.CaptureQualityController;
 import com.myhexaville.androidwebrtc.web_rtc.DirectRTCClient;
 import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient;
 import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.PeerConnectionParameters;
@@ -69,7 +70,7 @@ import java.util.Set;
  */
 public class CallActivity extends AppCompatActivity implements AppRTCClient.SignalingEvents,
         PeerConnectionClient.PeerConnectionEvents,
-        CallFragment.OnCallEvents {
+        OnCallEvents {
     private static final String LOG_TAG = "CallActivity";
     public static final String EXTRA_ROOMID = "org.appspot.apprtc.ROOMID";
     public static final String EXTRA_LOOPBACK = "org.appspot.apprtc.LOOPBACK";
@@ -78,12 +79,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
             "org.appsopt.apprtc.VIDEO_CAPTUREQUALITYSLIDER";
     public static final String EXTRA_CMDLINE = "org.appspot.apprtc.CMDLINE";
     public static final String EXTRA_VIDEO_FILE_AS_CAMERA = "org.appspot.apprtc.VIDEO_FILE_AS_CAMERA";
-    public static final String EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_WIDTH =
-            "org.appspot.apprtc.SAVE_REMOTE_VIDEO_TO_FILE_WIDTH";
-    public static final String EXTRA_SAVE_REMOTE_VIDEO_TO_FILE_HEIGHT =
-            "org.appspot.apprtc.SAVE_REMOTE_VIDEO_TO_FILE_HEIGHT";
-    public static final String EXTRA_USE_VALUES_FROM_INTENT =
-            "org.appspot.apprtc.USE_VALUES_FROM_INTENT";
 
     private static final String TAG = "CallRTCClient";
     private static final int CAPTURE_PERMISSION_REQUEST_CODE = 1;
@@ -130,8 +125,11 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
     private static Intent mediaProjectionPermissionResultData;
     private static int mediaProjectionPermissionResultCode;
 
+    private boolean videoCallEnabled = true;
+
+
+
     // Controls
-    private CallFragment callFragment;
     private VideoFileRenderer videoFileRenderer;
     private ActivityCallBinding binding;
 
@@ -154,8 +152,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         signalingParameters = null;
         scalingType = ScalingType.SCALE_ASPECT_FILL;
 
-        // Create UI controls.
-        callFragment = new CallFragment();
 
         // Show/hide call control fragment on view click.
         View.OnClickListener listener = view -> toggleCallControlFragmentVisibility();
@@ -228,7 +224,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
                         false,
                         false);
         commandLineRun = false;
-        int runTimeMs = 0;
 
         Log.d(TAG, "VIDEO_FILE: '" + intent.getStringExtra(EXTRA_VIDEO_FILE_AS_CAMERA) + "'");
 
@@ -243,17 +238,15 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         // Create connection parameters.
         roomConnectionParameters = new RoomConnectionParameters(roomUri.toString(), roomId, loopback);
 
-        // Send intent arguments to fragments.
-        callFragment.setArguments(intent.getExtras());
-        // Activate call and HUD fragments and start the call.
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.call_fragment_container, callFragment);
-        ft.commit();
 
-        // For command line execution run connection for <runTimeMs> and exit.
-        if (commandLineRun && runTimeMs > 0) {
-            (new Handler()).postDelayed(this::disconnect, runTimeMs);
-        }
+        binding.buttonCallDisconnect.setOnClickListener(view -> onCallHangUp());
+
+        binding.buttonCallSwitchCamera.setOnClickListener(view -> onCameraSwitch());
+
+        binding.buttonCallToggleMic.setOnClickListener(view -> {
+            boolean enabled = onToggleMic();
+            binding.buttonCallToggleMic.setAlpha(enabled ? 1.0f : 0.3f);
+        });
 
         peerConnectionClient = PeerConnectionClient.getInstance();
         if (loopback) {
@@ -347,6 +340,31 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        boolean captureSliderEnabled = false;
+        Bundle args = getIntent().getExtras();
+        if (args != null) {
+            String contactName = args.getString(CallActivity.EXTRA_ROOMID);
+            binding.contactNameCall.setText(contactName);
+            videoCallEnabled = args.getBoolean(CallActivity.EXTRA_VIDEO_CALL, true);
+            captureSliderEnabled = videoCallEnabled
+                    && args.getBoolean(CallActivity.EXTRA_VIDEO_CAPTUREQUALITYSLIDER_ENABLED, false);
+        }
+        if (!videoCallEnabled) {
+            binding.buttonCallSwitchCamera.setVisibility(View.INVISIBLE);
+        }
+        if (captureSliderEnabled) {
+            binding.captureFormatSliderCall.setOnSeekBarChangeListener(
+                    new CaptureQualityController(binding.captureFormatTextCall, this));
+        } else {
+            binding.captureFormatTextCall.setVisibility(View.GONE);
+            binding.captureFormatSliderCall.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         disconnect();
         if (logToast != null) {
@@ -388,19 +406,11 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
 
     // Helper functions.
     private void toggleCallControlFragmentVisibility() {
-        if (!iceConnected || !callFragment.isAdded()) {
+        if (!iceConnected ) {
             return;
         }
         // Show/hide call control fragment
         callControlFragmentVisible = !callControlFragmentVisible;
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        if (callControlFragmentVisible) {
-            ft.show(callFragment);
-        } else {
-            ft.hide(callFragment);
-        }
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        ft.commit();
     }
 
     private void updateVideoView() {

@@ -14,7 +14,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.myhexaville.androidwebrtc.R;
-import com.myhexaville.androidwebrtc.call.CallFragment;
+import com.myhexaville.androidwebrtc.call.OnCallEvents;
 
 import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 
@@ -34,14 +34,14 @@ public class CaptureQualityController implements SeekBar.OnSeekBarChangeListener
     // Prioritize framerate below this threshold and resolution above the threshold.
     private static final int FRAMERATE_THRESHOLD = 15;
     private TextView captureFormatText;
-    private CallFragment.OnCallEvents callEvents;
+    private OnCallEvents callEvents;
     private int width = 0;
     private int height = 0;
     private int framerate = 0;
     private double targetBandwidth = 0;
 
     public CaptureQualityController(
-            TextView captureFormatText, CallFragment.OnCallEvents callEvents) {
+            TextView captureFormatText, OnCallEvents callEvents) {
         this.captureFormatText = captureFormatText;
         this.callEvents = callEvents;
     }

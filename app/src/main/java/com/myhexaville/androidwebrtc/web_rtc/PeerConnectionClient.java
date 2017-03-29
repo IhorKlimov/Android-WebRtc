@@ -181,6 +181,22 @@ public class PeerConnectionClient {
         public final boolean enableLevelControl;
         private final DataChannelParameters dataChannelParameters;
 
+        public static PeerConnectionParameters createDefault() {
+            return new PeerConnectionParameters(true, false,
+                    false, 0, 0, 0,
+                    0, "VP8",
+                    true,
+                    false,
+                    0, "OPUS",
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false);
+        }
+
         public PeerConnectionParameters(boolean videoCallEnabled, boolean loopback, boolean tracing,
                                         int videoWidth, int videoHeight, int videoFps, int videoMaxBitrate, String videoCodec,
                                         boolean videoCodecHwAcceleration, boolean videoFlexfecEnabled, int audioStartBitrate,

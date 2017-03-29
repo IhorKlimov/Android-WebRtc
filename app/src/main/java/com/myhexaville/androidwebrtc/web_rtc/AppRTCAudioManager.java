@@ -26,7 +26,6 @@ import com.myhexaville.androidwebrtc.util.AppRTCUtils;
 
 import org.webrtc.ThreadUtils;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -168,7 +167,7 @@ public class AppRTCAudioManager {
     /**
      * Construction.
      */
-  public  static AppRTCAudioManager create(Context context) {
+    public static AppRTCAudioManager create(Context context) {
         return new AppRTCAudioManager(context);
     }
 

@@ -97,7 +97,7 @@ public interface AppRTCClient {
      * <p>
      * <p>Methods are guaranteed to be invoked on the UI thread of |activity|.
      */
-    interface SignalingEvents {
+    interface   SignalingEvents {
         /**
          * Callback fired once the room's signaling parameters
          * SignalingParameters are extracted.

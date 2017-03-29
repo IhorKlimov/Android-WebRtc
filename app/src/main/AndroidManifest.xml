@@ -37,6 +37,7 @@
             android:name=".call.CallActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
+            android:theme="@style/AppTheme.Call"
             android:screenOrientation="fullUser"/>
     </application>
 </manifest>

@@ -329,13 +329,6 @@ public class PeerConnectionClient {
     }
 
     public void createPeerConnection(final EglBase.Context renderEGLContext,
-                                     final VideoRenderer.Callbacks localRender, final VideoRenderer.Callbacks remoteRender,
-                                     final VideoCapturer videoCapturer, final SignalingParameters signalingParameters) {
-        createPeerConnection(renderEGLContext, localRender, Collections.singletonList(remoteRender),
-                videoCapturer, signalingParameters);
-    }
-
-    public void createPeerConnection(final EglBase.Context renderEGLContext,
                                      final VideoRenderer.Callbacks localRender, final List<VideoRenderer.Callbacks> remoteRenders,
                                      final VideoCapturer videoCapturer, final SignalingParameters signalingParameters) {
         if (peerConnectionParameters == null) {
@@ -521,7 +514,7 @@ public class PeerConnectionClient {
         Log.d(TAG, "Create peer connection.");
 
         Log.d(TAG, "PCConstraints: " + pcConstraints.toString());
-        queuedRemoteCandidates = new LinkedList<IceCandidate>();
+        queuedRemoteCandidates = new LinkedList<>();
 
         if (videoCallEnabled) {
             Log.d(TAG, "EGLContext: " + renderEGLContext);
@@ -644,12 +637,7 @@ public class PeerConnectionClient {
         if (peerConnection == null || isError) {
             return;
         }
-        boolean success = peerConnection.getStats(new StatsObserver() {
-            @Override
-            public void onComplete(final StatsReport[] reports) {
-                events.onPeerConnectionStatsReady(reports);
-            }
-        }, null);
+        boolean success = peerConnection.getStats(reports -> events.onPeerConnectionStatsReady(reports), null);
         if (!success) {
             Log.e(TAG, "getStats() returns false!");
         }
@@ -678,13 +666,10 @@ public class PeerConnectionClient {
     }
 
     public void setAudioEnabled(final boolean enable) {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                enableAudio = enable;
-                if (localAudioTrack != null) {
-                    localAudioTrack.setEnabled(enableAudio);
-                }
+        executor.execute(() -> {
+            enableAudio = enable;
+            if (localAudioTrack != null) {
+                localAudioTrack.setEnabled(enableAudio);
             }
         });
     }
@@ -786,30 +771,24 @@ public class PeerConnectionClient {
     }
 
     public void stopVideoSource() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                if (videoCapturer != null && !videoCapturerStopped) {
-                    Log.d(TAG, "Stop video source.");
-                    try {
-                        videoCapturer.stopCapture();
-                    } catch (InterruptedException e) {
-                    }
-                    videoCapturerStopped = true;
+        executor.execute(() -> {
+            if (videoCapturer != null && !videoCapturerStopped) {
+                Log.d(TAG, "Stop video source.");
+                try {
+                    videoCapturer.stopCapture();
+                } catch (InterruptedException e) {
                 }
+                videoCapturerStopped = true;
             }
         });
     }
 
     public void startVideoSource() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                if (videoCapturer != null && videoCapturerStopped) {
-                    Log.d(TAG, "Restart video source.");
-                    videoCapturer.startCapture(videoWidth, videoHeight, videoFps);
-                    videoCapturerStopped = false;
-                }
+        executor.execute(() -> {
+            if (videoCapturer != null && videoCapturerStopped) {
+                Log.d(TAG, "Restart video source.");
+                videoCapturer.startCapture(videoWidth, videoHeight, videoFps);
+                videoCapturerStopped = false;
             }
         });
     }
@@ -847,13 +826,10 @@ public class PeerConnectionClient {
 
     private void reportError(final String errorMessage) {
         Log.e(TAG, "Peerconnection error: " + errorMessage);
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                if (!isError) {
-                    events.onPeerConnectionError(errorMessage);
-                    isError = true;
-                }
+        executor.execute(() -> {
+            if (!isError) {
+                events.onPeerConnectionError(errorMessage);
+                isError = true;
             }
         });
     }

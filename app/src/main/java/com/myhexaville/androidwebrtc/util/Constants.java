@@ -2,7 +2,6 @@ package com.myhexaville.androidwebrtc.util;
 
 public class Constants {
     public static final String EXTRA_ROOMID = "org.appspot.apprtc.ROOMID";
-    public static final String EXTRA_VIDEO_FILE_AS_CAMERA = "org.appspot.apprtc.VIDEO_FILE_AS_CAMERA";
     public static final int CAPTURE_PERMISSION_REQUEST_CODE = 1;
 
     // List of mandatory application permissions.

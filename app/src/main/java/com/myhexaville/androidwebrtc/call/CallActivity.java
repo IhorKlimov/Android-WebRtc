@@ -12,9 +12,7 @@ package com.myhexaville.androidwebrtc.call;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -28,7 +26,6 @@ import com.myhexaville.androidwebrtc.web_rtc.AppRTCAudioManager;
 import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient;
 import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.RoomConnectionParameters;
 import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.SignalingParameters;
-import com.myhexaville.androidwebrtc.web_rtc.DirectRTCClient;
 import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient;
 import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.PeerConnectionParameters;
 import com.myhexaville.androidwebrtc.web_rtc.WebSocketRTCClient;
@@ -37,24 +34,19 @@ import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
 import org.webrtc.CameraEnumerator;
 import org.webrtc.EglBase;
-import org.webrtc.FileVideoCapturer;
 import org.webrtc.IceCandidate;
 import org.webrtc.Logging;
-import org.webrtc.RendererCommon.ScalingType;
 import org.webrtc.SessionDescription;
 import org.webrtc.StatsReport;
 import org.webrtc.VideoCapturer;
-import org.webrtc.VideoFileRenderer;
 import org.webrtc.VideoRenderer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static com.myhexaville.androidwebrtc.util.Constants.CAPTURE_PERMISSION_REQUEST_CODE;
 import static com.myhexaville.androidwebrtc.util.Constants.EXTRA_ROOMID;
-import static com.myhexaville.androidwebrtc.util.Constants.EXTRA_VIDEO_FILE_AS_CAMERA;
 import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_HEIGHT_CONNECTED;
 import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_HEIGHT_CONNECTING;
 import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_WIDTH_CONNECTED;
@@ -63,7 +55,6 @@ import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_X_CONNECTED;
 import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_X_CONNECTING;
 import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_Y_CONNECTED;
 import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_Y_CONNECTING;
-import static com.myhexaville.androidwebrtc.util.Constants.MANDATORY_PERMISSIONS;
 import static com.myhexaville.androidwebrtc.util.Constants.REMOTE_HEIGHT;
 import static com.myhexaville.androidwebrtc.util.Constants.REMOTE_WIDTH;
 import static com.myhexaville.androidwebrtc.util.Constants.REMOTE_X;
@@ -77,8 +68,8 @@ import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FIT;
  * Activity for peer connection call setup, call waiting
  * and call view.
  */
-public class CallActivity extends AppCompatActivity implements AppRTCClient.SignalingEvents,
-        PeerConnectionClient.PeerConnectionEvents, OnCallEvents {
+public class CallActivity extends AppCompatActivity
+        implements AppRTCClient.SignalingEvents, PeerConnectionClient.PeerConnectionEvents, OnCallEvents {
     private static final String LOG_TAG = "CallActivity";
 
     private PeerConnectionClient peerConnectionClient;
@@ -98,7 +89,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
     private long callStartedTimeMs;
     private boolean micEnabled = true;
 
-    private VideoFileRenderer videoFileRenderer;
     private ActivityCallBinding binding;
 
     @Override
@@ -110,12 +100,8 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
                 | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_call);
 
-        iceConnected = false;
-        signalingParameters = null;
-
         remoteRenderers.add(binding.remoteVideoView);
 
-        final Intent intent = getIntent();
 
         // Create video renderers.
         rootEglBase = EglBase.create();
@@ -128,6 +114,7 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         updateVideoView();
 
         // Get Intent parameters.
+        final Intent intent = getIntent();
         String roomId = intent.getStringExtra(EXTRA_ROOMID);
         Log.d(LOG_TAG, "Room ID: " + roomId);
         if (roomId == null || roomId.length() == 0) {
@@ -141,16 +128,10 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
         // If capturing format is not specified for screencapture, use screen resolution.
         peerConnectionParameters = PeerConnectionParameters.createDefault();
 
-        Log.d(LOG_TAG, "VIDEO_FILE: '" + intent.getStringExtra(EXTRA_VIDEO_FILE_AS_CAMERA) + "'");
-
         // Create connection client. Use DirectRTCClient if room name is an IP otherwise use the
         // standard WebSocketRTCClient.
-        if (!DirectRTCClient.IP_PATTERN.matcher(roomId).matches()) {
-            appRtcClient = new WebSocketRTCClient(this);
-        } else {
-            Log.i(LOG_TAG, "Using DirectRTCClient because room name looks like an IP.");
-            appRtcClient = new DirectRTCClient(this);
-        }
+        appRtcClient = new WebSocketRTCClient(this);
+
         // Create connection parameters.
         roomConnectionParameters = new RoomConnectionParameters("https://appr.tc", roomId, false);
 
@@ -367,10 +348,6 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
             peerConnectionClient = null;
         }
         binding.localVideoView.release();
-        if (videoFileRenderer != null) {
-            videoFileRenderer.release();
-            videoFileRenderer = null;
-        }
         binding.remoteVideoView.release();
         if (audioManager != null) {
             audioManager.stop();
@@ -424,15 +401,7 @@ public class CallActivity extends AppCompatActivity implements AppRTCClient.Sign
 
     private VideoCapturer createVideoCapturer() {
         VideoCapturer videoCapturer;
-        String videoFileAsCamera = getIntent().getStringExtra(EXTRA_VIDEO_FILE_AS_CAMERA);
-        if (videoFileAsCamera != null) {
-            try {
-                videoCapturer = new FileVideoCapturer(videoFileAsCamera);
-            } catch (IOException e) {
-                reportError("Failed to open video file for emulated camera");
-                return null;
-            }
-        } else if (useCamera2()) {
+        if (useCamera2()) {
             Logging.d(LOG_TAG, "Creating capturer using camera2 API.");
             videoCapturer = createCameraCapturer(new Camera2Enumerator(this));
         } else {

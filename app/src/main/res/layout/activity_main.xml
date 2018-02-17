@@ -35,6 +35,8 @@
                 android:id="@+id/connect_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:padding="12dp"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/connect_description"
                 app:srcCompat="@drawable/call" />
         </LinearLayout>

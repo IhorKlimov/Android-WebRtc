@@ -40,11 +40,19 @@ public class SampleCameraRenderActivity extends AppCompatActivity {
 
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory factory = new PeerConnectionFactory(null);
-
-        VideoCapturer videoCapturer = createVideoCapturer();
-
         factory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());
-        createVideoTrack(videoCapturer, factory);
+
+        createVideoTrack(factory);
+    }
+
+    private void createVideoTrack(PeerConnectionFactory factory) {
+        VideoCapturer videoCapturer = createVideoCapturer();
+        VideoSource videoSource = factory.createVideoSource(videoCapturer);
+        videoCapturer.startCapture(1280, 720, 30);
+
+        VideoTrack localVideoTrack = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
+        localVideoTrack.setEnabled(true);
+        localVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView));
     }
 
     private VideoCapturer createVideoCapturer() {
@@ -90,15 +98,6 @@ public class SampleCameraRenderActivity extends AppCompatActivity {
 
     private boolean useCamera2() {
         return Camera2Enumerator.isSupported(this);
-    }
-
-    private void createVideoTrack(VideoCapturer capturer, PeerConnectionFactory factory) {
-        VideoSource videoSource = factory.createVideoSource(capturer);
-        capturer.startCapture(1280, 720, 30);
-
-        VideoTrack localVideoTrack = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
-        localVideoTrack.setEnabled(true);
-        localVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView));
     }
 
 }

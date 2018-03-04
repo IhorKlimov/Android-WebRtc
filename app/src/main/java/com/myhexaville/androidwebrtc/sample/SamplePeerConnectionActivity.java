@@ -18,7 +18,6 @@ import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
-import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoRenderer;
@@ -29,6 +28,9 @@ import java.util.ArrayList;
 
 import static com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
 
+/*
+* Shows how to stream video with PeerConnection locally without any networking
+* */
 public class SamplePeerConnectionActivity extends AppCompatActivity {
     private static final String TAG = "SamplePeerConnectionAct";
     public static final int VIDEO_RESOLUTION_WIDTH = 1280;
@@ -37,16 +39,29 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
     private static final String DTLS_SRTP_KEY_AGREEMENT_CONSTRAINT = "DtlsSrtpKeyAgreement";
 
     private ActivitySamplePeerConnectionBinding binding;
+    private EglBase rootEglBase;
+    private VideoTrack videoTrackFromCamera;
+    private PeerConnectionFactory factory;
     private PeerConnection localPeerConnection, remotePeerConnection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sample_peer_connection);
 
-        // Create video renderers.
-        EglBase rootEglBase = EglBase.create();
+        initializeSurfaceViews();
+
+        initializePeerConnectionFactory();
+
+        createVideoTrackFromCameraAndShowIt();
+
+        initializePeerConnections();
+
+        startStreamingVideo();
+    }
+
+    private void initializeSurfaceViews() {
+        rootEglBase = EglBase.create();
         binding.surfaceView.init(rootEglBase.getEglBaseContext(), null);
         binding.surfaceView.setEnableHardwareScaler(true);
         binding.surfaceView.setMirror(true);
@@ -54,19 +69,32 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
         binding.surfaceView2.init(rootEglBase.getEglBaseContext(), null);
         binding.surfaceView2.setEnableHardwareScaler(true);
         binding.surfaceView2.setMirror(true);
+    }
 
+    private void initializePeerConnectionFactory() {
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
-        PeerConnectionFactory factory = new PeerConnectionFactory(null);
+        factory = new PeerConnectionFactory(null);
         factory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());
+    }
 
-        VideoTrack videoTrack = createVideoTrack(factory);
+    private void createVideoTrackFromCameraAndShowIt() {
+        VideoCapturer videoCapturer = createVideoCapturer();
+        VideoSource videoSource = factory.createVideoSource(videoCapturer);
+        videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
 
+        videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
+        videoTrackFromCamera.setEnabled(true);
+        videoTrackFromCamera.addRenderer(new VideoRenderer(binding.surfaceView));
+    }
+
+    private void initializePeerConnections() {
         localPeerConnection = createPeerConnection(factory, true);
         remotePeerConnection = createPeerConnection(factory, false);
+    }
 
+    private void startStreamingVideo() {
         MediaStream mediaStream = factory.createLocalMediaStream("ARDAMS");
-        mediaStream.addTrack(videoTrack);
-
+        mediaStream.addTrack(videoTrackFromCamera);
         localPeerConnection.addStream(mediaStream);
 
         MediaConstraints sdpMediaConstraints = new MediaConstraints();
@@ -166,18 +194,6 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
         };
 
         return factory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
-    }
-
-    private VideoTrack createVideoTrack(PeerConnectionFactory factory) {
-        VideoCapturer videoCapturer = createVideoCapturer();
-        VideoSource videoSource = factory.createVideoSource(videoCapturer);
-        videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
-
-        VideoTrack localVideoTrack = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
-        localVideoTrack.setEnabled(true);
-        localVideoTrack.addRenderer(new VideoRenderer(binding.surfaceView));
-
-        return localVideoTrack;
     }
 
     private VideoCapturer createVideoCapturer() {

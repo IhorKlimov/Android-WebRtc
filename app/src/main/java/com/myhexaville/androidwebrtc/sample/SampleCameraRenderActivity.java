@@ -49,10 +49,10 @@ public class SampleCameraRenderActivity extends AppCompatActivity {
         PeerConnectionFactory factory = new PeerConnectionFactory(null);
         factory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());
 
-        createVideoTrack(factory);
+        createVideoTrackFromCameraAndShowIt(factory);
     }
 
-    private void createVideoTrack(PeerConnectionFactory factory) {
+    private void createVideoTrackFromCameraAndShowIt(PeerConnectionFactory factory) {
         VideoCapturer videoCapturer = createVideoCapturer();
         VideoSource videoSource = factory.createVideoSource(videoCapturer);
         videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);

@@ -23,6 +23,10 @@ import static com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.VIDEO_T
 * Example of how to render camera with WebRTC SDK without any abstraction classes
 * */
 public class SampleCameraRenderActivity extends AppCompatActivity {
+    public static final int VIDEO_RESOLUTION_WIDTH = 1280;
+    public static final int VIDEO_RESOLUTION_HEIGHT = 720;
+    public static final int FPS = 30;
+
     private ActivitySampleCameraRenderBinding binding;
 
     @Override
@@ -34,9 +38,12 @@ public class SampleCameraRenderActivity extends AppCompatActivity {
         // Create video renderers.
         EglBase rootEglBase = EglBase.create();
         binding.surfaceView.init(rootEglBase.getEglBaseContext(), null);
-
         binding.surfaceView.setEnableHardwareScaler(true);
         binding.surfaceView.setMirror(true);
+
+        binding.surfaceView2.init(rootEglBase.getEglBaseContext(), null);
+        binding.surfaceView2.setEnableHardwareScaler(true);
+        binding.surfaceView2.setMirror(true);
 
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory factory = new PeerConnectionFactory(null);
@@ -48,7 +55,7 @@ public class SampleCameraRenderActivity extends AppCompatActivity {
     private void createVideoTrack(PeerConnectionFactory factory) {
         VideoCapturer videoCapturer = createVideoCapturer();
         VideoSource videoSource = factory.createVideoSource(videoCapturer);
-        videoCapturer.startCapture(1280, 720, 30);
+        videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
 
         VideoTrack localVideoTrack = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
         localVideoTrack.setEnabled(true);
@@ -61,9 +68,6 @@ public class SampleCameraRenderActivity extends AppCompatActivity {
             videoCapturer = createCameraCapturer(new Camera2Enumerator(this));
         } else {
             videoCapturer = createCameraCapturer(new Camera1Enumerator(true));
-        }
-        if (videoCapturer == null) {
-            return null;
         }
         return videoCapturer;
     }
@@ -96,6 +100,10 @@ public class SampleCameraRenderActivity extends AppCompatActivity {
         return null;
     }
 
+    /*
+    * Read more about Camera2 here
+    * https://developer.android.com/reference/android/hardware/camera2/package-summary.html
+    * */
     private boolean useCamera2() {
         return Camera2Enumerator.isSupported(this);
     }

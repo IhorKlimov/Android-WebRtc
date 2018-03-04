@@ -214,4 +214,5 @@
     <string name="pref_tracing_default" translatable="false">false</string>
     <string name="title_activity_launch">LaunchActivity</string>
     <string name="title_activity_sample">SampleActivity</string>
+    <string name="title_activity_sample_peer_connection">SamplePeerConnectionActivity</string>
 </resources>

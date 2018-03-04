@@ -102,7 +102,6 @@ public class CallActivity extends AppCompatActivity
 
         remoteRenderers.add(binding.remoteVideoView);
 
-
         // Create video renderers.
         rootEglBase = EglBase.create();
         binding.localVideoView.init(rootEglBase.getEglBaseContext(), null);

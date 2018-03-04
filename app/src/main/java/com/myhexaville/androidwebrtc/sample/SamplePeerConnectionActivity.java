@@ -37,6 +37,7 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
     private static final String DTLS_SRTP_KEY_AGREEMENT_CONSTRAINT = "DtlsSrtpKeyAgreement";
 
     private ActivitySamplePeerConnectionBinding binding;
+    private PeerConnection localPeerConnection, remotePeerConnection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,75 +61,35 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
 
         VideoTrack videoTrack = createVideoTrack(factory);
 
+        localPeerConnection = createPeerConnection(factory, true);
+        remotePeerConnection = createPeerConnection(factory, false);
 
-        // Local
-        PeerConnection localPeerConnection = createPeerConnection(factory);
-        PeerConnection remotePeerConnection = createPeerConnection(factory);
-
-
-        // Setup local peer connection
         MediaStream mediaStream = factory.createLocalMediaStream("ARDAMS");
         mediaStream.addTrack(videoTrack);
 
         localPeerConnection.addStream(mediaStream);
 
-        // Create SDP constraints.
         MediaConstraints sdpMediaConstraints = new MediaConstraints();
-        sdpMediaConstraints.mandatory.add(
-                new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
 
-        localPeerConnection.createOffer(new SdpObserver() {
+        localPeerConnection.createOffer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 Log.d(TAG, "onCreateSuccess: ");
-                String sdpDescription = sessionDescription.description;
-                final SessionDescription sdp = new SessionDescription(sessionDescription.type, sdpDescription);
-                localPeerConnection.setLocalDescription(this, sdp);
+                localPeerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
+                remotePeerConnection.setRemoteDescription(new SimpleSdpObserver(), sessionDescription);
 
-                remotePeerConnection.setRemoteDescription(new SdpObserver() {
+                remotePeerConnection.createAnswer(new SimpleSdpObserver() {
                     @Override
                     public void onCreateSuccess(SessionDescription sessionDescription) {
-                        Log.d(TAG, "onCreateSuccess: remote");
+                        localPeerConnection.setRemoteDescription(new SimpleSdpObserver(), sessionDescription);
+                        remotePeerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
                     }
-
-                    @Override
-                    public void onSetSuccess() {
-                        Log.d(TAG, "onSetSuccess: remote");
-                        remotePeerConnection.createAnswer(this, sdpMediaConstraints);
-                    }
-
-                    @Override
-                    public void onCreateFailure(String s) {
-                        Log.d(TAG, "onCreateFailure: remote");
-                    }
-
-                    @Override
-                    public void onSetFailure(String s) {
-                        Log.d(TAG, "onSetFailure: remote");
-                    }
-                }, sdp);
-
-            }
-
-            @Override
-            public void onSetSuccess() {
-                Log.d(TAG, "onSetSuccess: ");
-            }
-
-            @Override
-            public void onCreateFailure(String s) {
-                Log.d(TAG, "onCreateFailure: ");
-            }
-
-            @Override
-            public void onSetFailure(String s) {
-                Log.d(TAG, "onSetFailure: ");
+                }, sdpMediaConstraints);
             }
         }, sdpMediaConstraints);
-
     }
 
-    private PeerConnection createPeerConnection(PeerConnectionFactory factory) {
+    private PeerConnection createPeerConnection(PeerConnectionFactory factory, boolean isLocal) {
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(new ArrayList<>());
         // TCP candidates are only useful when connecting to a server that supports
         // ICE-TCP.
@@ -140,14 +101,8 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
         rtcConfig.keyType = PeerConnection.KeyType.ECDSA;
 
         MediaConstraints pcConstraints = new MediaConstraints();
-        // Enable DTLS for normal calls and disable for loopback calls.
-//        if (peerConnectionParameters.loopback) {
-//            pcConstraints.optional.add(
-//                    new MediaConstraints.KeyValuePair(DTLS_SRTP_KEY_AGREEMENT_CONSTRAINT, "false"));
-//        } else {
         pcConstraints.optional.add(
                 new MediaConstraints.KeyValuePair(DTLS_SRTP_KEY_AGREEMENT_CONSTRAINT, "true"));
-//        }
 
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
             @Override
@@ -172,7 +127,12 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
 
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
-                Log.d(TAG, "onIceCandidate: ");
+                Log.d(TAG, "onIceCandidate: " + isLocal);
+                if (isLocal) {
+                    remotePeerConnection.addIceCandidate(iceCandidate);
+                } else {
+                    localPeerConnection.addIceCandidate(iceCandidate);
+                }
             }
 
             @Override

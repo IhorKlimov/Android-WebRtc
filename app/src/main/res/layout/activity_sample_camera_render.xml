@@ -22,25 +22,10 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
+        <org.webrtc.SurfaceViewRenderer
+            android:id="@+id/surface_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <org.webrtc.SurfaceViewRenderer
-                android:id="@+id/surface_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <org.webrtc.SurfaceViewRenderer
-                android:id="@+id/surface_view2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-        </LinearLayout>
-
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </android.support.design.widget.CoordinatorLayout>
 </layout>

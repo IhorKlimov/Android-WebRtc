@@ -41,10 +41,6 @@ public class SampleCameraRenderActivity extends AppCompatActivity {
         binding.surfaceView.setEnableHardwareScaler(true);
         binding.surfaceView.setMirror(true);
 
-        binding.surfaceView2.init(rootEglBase.getEglBaseContext(), null);
-        binding.surfaceView2.setEnableHardwareScaler(true);
-        binding.surfaceView2.setMirror(true);
-
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory factory = new PeerConnectionFactory(null);
         factory.setVideoHwAccelerationOptions(rootEglBase.getEglBaseContext(), rootEglBase.getEglBaseContext());

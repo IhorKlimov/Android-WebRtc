@@ -54,7 +54,11 @@
         <activity
             android:name=".tutorial.DataChannelActivity"
             android:label="@string/title_activity_sample_data_channel"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".tutorial.SocketIOActivity"
+            android:label="@string/title_activity_socket_io"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

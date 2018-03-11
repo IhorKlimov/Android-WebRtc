@@ -10,6 +10,7 @@ import com.myhexaville.androidwebrtc.app_rtc_sample.main.AppRTCMainActivity;
 import com.myhexaville.androidwebrtc.tutorial.CameraRenderActivity;
 import com.myhexaville.androidwebrtc.tutorial.DataChannelActivity;
 import com.myhexaville.androidwebrtc.tutorial.MediaStreamActivity;
+import com.myhexaville.androidwebrtc.tutorial.SocketIOActivity;
 
 public class LauncherActivity extends AppCompatActivity {
 
@@ -35,5 +36,10 @@ public class LauncherActivity extends AppCompatActivity {
 
     public void openSampleDataChannelActivity(View view) {
         startActivity(new Intent(this, DataChannelActivity.class));
+    }
+
+    public void openSampleSocketActivity(View view) {
+        startActivity(new Intent(this, SocketIOActivity.class));
+
     }
 }

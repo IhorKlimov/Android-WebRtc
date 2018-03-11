@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.myhexaville.androidwebrtc.main.MainActivity;
 import com.myhexaville.androidwebrtc.sample.SampleCameraRenderActivity;
+import com.myhexaville.androidwebrtc.sample.SampleDataChannelActivity;
 import com.myhexaville.androidwebrtc.sample.SamplePeerConnectionActivity;
 
 public class LauncherActivity extends AppCompatActivity {
@@ -30,5 +31,9 @@ public class LauncherActivity extends AppCompatActivity {
 
     public void openSamplePeerConnectionActivity(View view) {
         startActivity(new Intent(this, SamplePeerConnectionActivity.class));
+    }
+
+    public void openSampleDataChannelActivity(View view) {
+        startActivity(new Intent(this, SampleDataChannelActivity.class));
     }
 }

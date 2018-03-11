@@ -50,7 +50,11 @@
         <activity
             android:name=".sample.SamplePeerConnectionActivity"
             android:label="@string/title_activity_sample_peer_connection"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".sample.SampleDataChannelActivity"
+            android:label="@string/title_activity_sample_data_channel"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

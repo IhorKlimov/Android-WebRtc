@@ -45,6 +45,13 @@
             android:layout_marginTop="16dp"
             android:onClick="openSamplePeerConnectionActivity"
             android:text="Sample Peer Connection Activity" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="openSampleDataChannelActivity"
+            android:text="Sample Data Channel Activity" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

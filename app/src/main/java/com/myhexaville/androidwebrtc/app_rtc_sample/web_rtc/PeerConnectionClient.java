@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.web_rtc;
+package com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc;
 
 import android.content.Context;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.SignalingParameters;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCClient.SignalingParameters;
 
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
@@ -33,7 +33,6 @@ import org.webrtc.RtpParameters;
 import org.webrtc.RtpSender;
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
-import org.webrtc.StatsObserver;
 import org.webrtc.StatsReport;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoRenderer;
@@ -45,7 +44,6 @@ import org.webrtc.voiceengine.WebRtcAudioUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;

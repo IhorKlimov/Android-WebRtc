@@ -24,11 +24,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".main.MainActivity"
+            android:name=".app_rtc_sample.main.AppRTCMainActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".call.CallActivity"
+            android:name=".app_rtc_sample.call.CallActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="fullUser"
@@ -44,15 +44,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".sample.SampleCameraRenderActivity"
+            android:name=".tutorial.CameraRenderActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".sample.SamplePeerConnectionActivity"
+            android:name=".tutorial.MediaStreamActivity"
             android:label="@string/title_activity_sample_peer_connection"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".sample.SampleDataChannelActivity"
+            android:name=".tutorial.DataChannelActivity"
             android:label="@string/title_activity_sample_data_channel"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>

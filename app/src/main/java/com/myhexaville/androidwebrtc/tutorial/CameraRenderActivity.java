@@ -1,4 +1,4 @@
-package com.myhexaville.androidwebrtc.sample;
+package com.myhexaville.androidwebrtc.tutorial;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -17,12 +17,12 @@ import org.webrtc.VideoRenderer;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
 
-import static com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
 
 /*
 * Example of how to render camera with WebRTC SDK without any abstraction classes
 * */
-public class SampleCameraRenderActivity extends AppCompatActivity {
+public class CameraRenderActivity extends AppCompatActivity {
     public static final int VIDEO_RESOLUTION_WIDTH = 1280;
     public static final int VIDEO_RESOLUTION_HEIGHT = 720;
     public static final int FPS = 30;

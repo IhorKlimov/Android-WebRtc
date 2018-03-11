@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:onClick="openSamplePeerConnectionActivity"
-            android:text="Sample Peer Connection Activity" />
+            android:text="Sample Media Stream Activity" />
 
         <Button
             android:layout_width="wrap_content"

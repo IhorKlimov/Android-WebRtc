@@ -8,34 +8,30 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.main;
+package com.myhexaville.androidwebrtc.app_rtc_sample.main;
 
 import android.Manifest;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.myhexaville.androidwebrtc.R;
-import com.myhexaville.androidwebrtc.call.CallActivity;
+import com.myhexaville.androidwebrtc.app_rtc_sample.call.CallActivity;
 import com.myhexaville.androidwebrtc.databinding.ActivityMainBinding;
-
-import java.util.Random;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.myhexaville.androidwebrtc.util.Constants.EXTRA_ROOMID;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.EXTRA_ROOMID;
 
 /**
  * Handles the initial setup where the user selects which room to join.
  */
-public class MainActivity extends AppCompatActivity {
-    private static final String LOG_TAG = "MainActivity";
+public class AppRTCMainActivity extends AppCompatActivity {
+    private static final String LOG_TAG = "AppRTCMainActivity";
     private static final int CONNECTION_REQUEST = 1;
     private static final int RC_CALL = 111;
     private ActivityMainBinding binding;

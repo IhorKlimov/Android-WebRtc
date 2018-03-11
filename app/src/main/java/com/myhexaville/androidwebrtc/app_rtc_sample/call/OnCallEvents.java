@@ -1,4 +1,4 @@
-package com.myhexaville.androidwebrtc.call;
+package com.myhexaville.androidwebrtc.app_rtc_sample.call;
 
 /**
  * Call control interface for container activity.

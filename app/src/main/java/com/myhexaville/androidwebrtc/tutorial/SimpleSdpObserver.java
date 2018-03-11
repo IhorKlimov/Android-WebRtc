@@ -1,6 +1,4 @@
-package com.myhexaville.androidwebrtc.sample;
-
-import android.util.Log;
+package com.myhexaville.androidwebrtc.tutorial;
 
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;

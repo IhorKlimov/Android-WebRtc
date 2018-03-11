@@ -6,10 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.myhexaville.androidwebrtc.main.MainActivity;
-import com.myhexaville.androidwebrtc.sample.SampleCameraRenderActivity;
-import com.myhexaville.androidwebrtc.sample.SampleDataChannelActivity;
-import com.myhexaville.androidwebrtc.sample.SamplePeerConnectionActivity;
+import com.myhexaville.androidwebrtc.app_rtc_sample.main.AppRTCMainActivity;
+import com.myhexaville.androidwebrtc.tutorial.CameraRenderActivity;
+import com.myhexaville.androidwebrtc.tutorial.DataChannelActivity;
+import com.myhexaville.androidwebrtc.tutorial.MediaStreamActivity;
 
 public class LauncherActivity extends AppCompatActivity {
 
@@ -22,18 +22,18 @@ public class LauncherActivity extends AppCompatActivity {
     }
 
     public void openAppRTCActivity(View view) {
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, AppRTCMainActivity.class));
     }
 
     public void openSampleActivity(View view) {
-        startActivity(new Intent(this, SampleCameraRenderActivity.class));
+        startActivity(new Intent(this, CameraRenderActivity.class));
     }
 
     public void openSamplePeerConnectionActivity(View view) {
-        startActivity(new Intent(this, SamplePeerConnectionActivity.class));
+        startActivity(new Intent(this, MediaStreamActivity.class));
     }
 
     public void openSampleDataChannelActivity(View view) {
-        startActivity(new Intent(this, SampleDataChannelActivity.class));
+        startActivity(new Intent(this, DataChannelActivity.class));
     }
 }

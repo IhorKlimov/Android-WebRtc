@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.view;
+package com.myhexaville.androidwebrtc.app_rtc_sample.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

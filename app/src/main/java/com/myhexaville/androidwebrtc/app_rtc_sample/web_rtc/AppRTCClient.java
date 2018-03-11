@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.web_rtc;
+package com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc;
 
 import org.webrtc.IceCandidate;
 import org.webrtc.PeerConnection;

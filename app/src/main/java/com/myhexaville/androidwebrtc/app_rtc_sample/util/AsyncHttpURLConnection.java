@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.util;
+package com.myhexaville.androidwebrtc.app_rtc_sample.util;
 
 import java.io.IOException;
 import java.io.InputStream;

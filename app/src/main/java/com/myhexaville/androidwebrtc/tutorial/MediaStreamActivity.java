@@ -1,4 +1,4 @@
-package com.myhexaville.androidwebrtc.sample;
+package com.myhexaville.androidwebrtc.tutorial;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -26,13 +26,13 @@ import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
 
-import static com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
 
 /*
 * Shows how to use PeerConnection to connect clients and stream video using MediaStream
 * without any networking
 * */
-public class SamplePeerConnectionActivity extends AppCompatActivity {
+public class MediaStreamActivity extends AppCompatActivity {
     private static final String TAG = "SamplePeerConnectionAct";
     public static final int VIDEO_RESOLUTION_WIDTH = 1280;
     public static final int VIDEO_RESOLUTION_HEIGHT = 720;

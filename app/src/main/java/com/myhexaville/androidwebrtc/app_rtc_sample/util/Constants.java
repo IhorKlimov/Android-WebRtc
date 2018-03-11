@@ -1,4 +1,4 @@
-package com.myhexaville.androidwebrtc.util;
+package com.myhexaville.androidwebrtc.app_rtc_sample.util;
 
 public class Constants {
     public static final String EXTRA_ROOMID = "org.appspot.apprtc.ROOMID";

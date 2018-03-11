@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.web_rtc;
+package com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc;
 
 
 import android.bluetooth.BluetoothAdapter;
@@ -26,7 +26,7 @@ import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
 
-import com.myhexaville.androidwebrtc.util.AppRTCUtils;
+import com.myhexaville.androidwebrtc.app_rtc_sample.util.AppRTCUtils;
 
 import org.webrtc.ThreadUtils;
 

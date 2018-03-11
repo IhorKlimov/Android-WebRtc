@@ -8,14 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.web_rtc;
+package com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc;
 
 
 import android.util.Log;
 
-import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.SignalingParameters;
-import com.myhexaville.androidwebrtc.util.AsyncHttpURLConnection;
-import com.myhexaville.androidwebrtc.util.AsyncHttpURLConnection.AsyncHttpEvents;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCClient.SignalingParameters;
+import com.myhexaville.androidwebrtc.app_rtc_sample.util.AsyncHttpURLConnection;
+import com.myhexaville.androidwebrtc.app_rtc_sample.util.AsyncHttpURLConnection.AsyncHttpEvents;
 
 import org.json.JSONArray;
 import org.json.JSONException;

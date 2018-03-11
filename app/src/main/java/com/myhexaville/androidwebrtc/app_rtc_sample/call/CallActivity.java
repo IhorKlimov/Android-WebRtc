@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.call;
+package com.myhexaville.androidwebrtc.app_rtc_sample.call;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -22,13 +22,13 @@ import android.widget.Toast;
 
 import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.databinding.ActivityCallBinding;
-import com.myhexaville.androidwebrtc.web_rtc.AppRTCAudioManager;
-import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient;
-import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.RoomConnectionParameters;
-import com.myhexaville.androidwebrtc.web_rtc.AppRTCClient.SignalingParameters;
-import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient;
-import com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.PeerConnectionParameters;
-import com.myhexaville.androidwebrtc.web_rtc.WebSocketRTCClient;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCAudioManager;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCClient;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCClient.RoomConnectionParameters;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCClient.SignalingParameters;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient.PeerConnectionParameters;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.WebSocketRTCClient;
 
 import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
@@ -45,21 +45,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.myhexaville.androidwebrtc.util.Constants.CAPTURE_PERMISSION_REQUEST_CODE;
-import static com.myhexaville.androidwebrtc.util.Constants.EXTRA_ROOMID;
-import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_HEIGHT_CONNECTED;
-import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_HEIGHT_CONNECTING;
-import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_WIDTH_CONNECTED;
-import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_WIDTH_CONNECTING;
-import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_X_CONNECTED;
-import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_X_CONNECTING;
-import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_Y_CONNECTED;
-import static com.myhexaville.androidwebrtc.util.Constants.LOCAL_Y_CONNECTING;
-import static com.myhexaville.androidwebrtc.util.Constants.REMOTE_HEIGHT;
-import static com.myhexaville.androidwebrtc.util.Constants.REMOTE_WIDTH;
-import static com.myhexaville.androidwebrtc.util.Constants.REMOTE_X;
-import static com.myhexaville.androidwebrtc.util.Constants.REMOTE_Y;
-import static com.myhexaville.androidwebrtc.util.Constants.STAT_CALLBACK_PERIOD;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.CAPTURE_PERMISSION_REQUEST_CODE;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.EXTRA_ROOMID;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.LOCAL_HEIGHT_CONNECTED;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.LOCAL_HEIGHT_CONNECTING;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.LOCAL_WIDTH_CONNECTED;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.LOCAL_WIDTH_CONNECTING;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.LOCAL_X_CONNECTED;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.LOCAL_X_CONNECTING;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.LOCAL_Y_CONNECTED;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.LOCAL_Y_CONNECTING;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.REMOTE_HEIGHT;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.REMOTE_WIDTH;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.REMOTE_X;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.REMOTE_Y;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.STAT_CALLBACK_PERIOD;
 import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FILL;
 import static org.webrtc.RendererCommon.ScalingType.SCALE_ASPECT_FIT;
 

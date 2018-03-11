@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-package com.myhexaville.androidwebrtc.web_rtc;
+package com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc;
 
 
 import android.content.BroadcastReceiver;
@@ -22,14 +22,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.myhexaville.androidwebrtc.R;
-import com.myhexaville.androidwebrtc.util.AppRTCUtils;
+import com.myhexaville.androidwebrtc.app_rtc_sample.util.AppRTCUtils;
 
 import org.webrtc.ThreadUtils;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.myhexaville.androidwebrtc.util.AppRTCUtils.assertIsTrue;
+import static com.myhexaville.androidwebrtc.app_rtc_sample.util.AppRTCUtils.assertIsTrue;
 
 /**
  * AppRTCAudioManager manages all audio related parts of the AppRTC demo.

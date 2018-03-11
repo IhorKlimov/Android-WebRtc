@@ -1,4 +1,4 @@
-package com.myhexaville.androidwebrtc.sample;
+package com.myhexaville.androidwebrtc.tutorial;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 * Shows how to use PeerConnection to connect clients and send text messages using DataChannel
 * without any networking
 * */
-public class SampleDataChannelActivity extends AppCompatActivity {
+public class DataChannelActivity extends AppCompatActivity {
     private static final String TAG = "SampleDataChannelAct";
 
     private ActivitySampleDataChannelBinding binding;

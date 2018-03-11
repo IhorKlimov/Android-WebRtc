@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import static com.myhexaville.androidwebrtc.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
 
 /*
-* Shows how to stream video with PeerConnection locally without any networking
+* Shows how to use PeerConnection to connect clients and stream video using MediaStream
+* without any networking
 * */
 public class SamplePeerConnectionActivity extends AppCompatActivity {
     private static final String TAG = "SamplePeerConnectionAct";
@@ -120,6 +121,7 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
     private PeerConnection createPeerConnection(PeerConnectionFactory factory, boolean isLocal) {
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(new ArrayList<>());
         MediaConstraints pcConstraints = new MediaConstraints();
+//                new MediaConstraints.KeyValuePair(DTLS_SRTP_KEY_AGREEMENT_CONSTRAINT, "true"));
 
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
             @Override

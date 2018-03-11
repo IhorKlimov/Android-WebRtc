@@ -21,6 +21,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+/*
+* Shows how to use PeerConnection to connect clients and send text messages using DataChannel
+* without any networking
+* */
 public class SampleDataChannelActivity extends AppCompatActivity {
     private static final String TAG = "SampleDataChannelAct";
 

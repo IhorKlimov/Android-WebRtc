@@ -119,18 +119,7 @@ public class SamplePeerConnectionActivity extends AppCompatActivity {
 
     private PeerConnection createPeerConnection(PeerConnectionFactory factory, boolean isLocal) {
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(new ArrayList<>());
-        // TCP candidates are only useful when connecting to a server that supports
-        // ICE-TCP.
-        rtcConfig.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.DISABLED;
-        rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
-        rtcConfig.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE;
-        rtcConfig.continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
-        // Use ECDSA encryption.
-        rtcConfig.keyType = PeerConnection.KeyType.ECDSA;
-
         MediaConstraints pcConstraints = new MediaConstraints();
-        pcConstraints.optional.add(
-                new MediaConstraints.KeyValuePair(DTLS_SRTP_KEY_AGREEMENT_CONSTRAINT, "true"));
 
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
             @Override

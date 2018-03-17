@@ -8,9 +8,9 @@ import android.view.View;
 
 import com.myhexaville.androidwebrtc.app_rtc_sample.main.AppRTCMainActivity;
 import com.myhexaville.androidwebrtc.tutorial.CameraRenderActivity;
+import com.myhexaville.androidwebrtc.tutorial.CompleteActivity;
 import com.myhexaville.androidwebrtc.tutorial.DataChannelActivity;
 import com.myhexaville.androidwebrtc.tutorial.MediaStreamActivity;
-import com.myhexaville.androidwebrtc.tutorial.SocketIOActivity;
 
 public class LauncherActivity extends AppCompatActivity {
 
@@ -39,7 +39,7 @@ public class LauncherActivity extends AppCompatActivity {
     }
 
     public void openSampleSocketActivity(View view) {
-        startActivity(new Intent(this, SocketIOActivity.class));
+        startActivity(new Intent(this, CompleteActivity.class));
 
     }
 }

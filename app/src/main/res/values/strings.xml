@@ -217,4 +217,5 @@
     <string name="title_activity_sample_peer_connection">SamplePeerConnectionActivity</string>
     <string name="title_activity_sample_data_channel">SampleDataChannelActivity</string>
     <string name="title_activity_socket_io">SocketIOActivity</string>
+    <string name="title_activity_complete">CompleteActivity</string>
 </resources>

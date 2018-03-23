@@ -121,7 +121,6 @@ public class MediaStreamActivity extends AppCompatActivity {
     private PeerConnection createPeerConnection(PeerConnectionFactory factory, boolean isLocal) {
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(new ArrayList<>());
         MediaConstraints pcConstraints = new MediaConstraints();
-//                new MediaConstraints.KeyValuePair(DTLS_SRTP_KEY_AGREEMENT_CONSTRAINT, "true"));
 
         PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
             @Override

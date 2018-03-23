@@ -1,17 +1,11 @@
 package com.myhexaville.androidwebrtc.tutorial;
 
 import android.Manifest;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 
 import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.databinding.ActivitySamplePeerConnectionBinding;
@@ -42,7 +36,6 @@ import io.socket.client.Socket;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.myhexaville.androidwebrtc.app_rtc_sample.util.Constants.CAPTURE_PERMISSION_REQUEST_CODE;
 import static com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
 import static com.myhexaville.androidwebrtc.tutorial.MediaStreamActivity.FPS;
 import static com.myhexaville.androidwebrtc.tutorial.MediaStreamActivity.VIDEO_RESOLUTION_HEIGHT;
@@ -56,16 +49,16 @@ public class CompleteActivity extends AppCompatActivity {
     private static final String TAG = "CompleteActivity";
     private static final int RC_CALL = 111;
 
-    private ActivitySamplePeerConnectionBinding binding;
     private Socket socket;
     private boolean isInitiator;
     private boolean isChannelReady;
-    private PeerConnection localPeerConnection;
-    //    private PeerConnection remotePeerConnection;
+    private boolean isStarted;
+
+    private ActivitySamplePeerConnectionBinding binding;
+    private PeerConnection peerConnection;
     private EglBase rootEglBase;
     private PeerConnectionFactory factory;
     private VideoTrack videoTrackFromCamera;
-    private boolean isStarted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,14 +147,14 @@ public class CompleteActivity extends AppCompatActivity {
                             if (!isInitiator && !isStarted) {
                                 maybeStart();
                             }
-                            localPeerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(OFFER, message.getString("sdp")));
+                            peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(OFFER, message.getString("sdp")));
                             doAnswer();
                         } else if (message.getString("type").equals("answer") && isStarted) {
-                            localPeerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(ANSWER, message.getString("sdp")));
+                            peerConnection.setRemoteDescription(new SimpleSdpObserver(), new SessionDescription(ANSWER, message.getString("sdp")));
                         } else if (message.getString("type").equals("candidate") && isStarted) {
                             Log.d(TAG, "connectToSignallingServer: receiving candidates");
                             IceCandidate candidate = new IceCandidate(message.getString("id"), message.getInt("label"), message.getString("candidate"));
-                            localPeerConnection.addIceCandidate(candidate);
+                            peerConnection.addIceCandidate(candidate);
                         }
                         /*else if (message === 'bye' && isStarted) {
                         handleRemoteHangup();
@@ -180,10 +173,10 @@ public class CompleteActivity extends AppCompatActivity {
     }
 
     private void doAnswer() {
-        localPeerConnection.createAnswer(new SimpleSdpObserver() {
+        peerConnection.createAnswer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
-                localPeerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
+                peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
                 JSONObject message = new JSONObject();
                 try {
                     message.put("type", "answer");
@@ -209,11 +202,11 @@ public class CompleteActivity extends AppCompatActivity {
     private void doCall() {
         MediaConstraints sdpMediaConstraints = new MediaConstraints();
 
-        localPeerConnection.createOffer(new SimpleSdpObserver() {
+        peerConnection.createOffer(new SimpleSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 Log.d(TAG, "onCreateSuccess: ");
-                localPeerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
+                peerConnection.setLocalDescription(new SimpleSdpObserver(), sessionDescription);
                 JSONObject message = new JSONObject();
                 try {
                     message.put("type", "offer");
@@ -258,13 +251,13 @@ public class CompleteActivity extends AppCompatActivity {
     }
 
     private void initializePeerConnections() {
-        localPeerConnection = createPeerConnection(factory);
+        peerConnection = createPeerConnection(factory);
     }
 
     private void startStreamingVideo() {
         MediaStream mediaStream = factory.createLocalMediaStream("ARDAMS");
         mediaStream.addTrack(videoTrackFromCamera);
-        localPeerConnection.addStream(mediaStream);
+        peerConnection.addStream(mediaStream);
 
         sendMessage("got user media");
     }
@@ -301,7 +294,6 @@ public class CompleteActivity extends AppCompatActivity {
             public void onIceCandidate(IceCandidate iceCandidate) {
                 Log.d(TAG, "onIceCandidate: ");
                 JSONObject message = new JSONObject();
-
 
                 try {
                     message.put("type", "candidate");

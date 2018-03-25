@@ -51,6 +51,7 @@ dependencies {
     implementation "com.android.support:design:$support_version"
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:support-v4:$support_version"
+    implementation 'com.myhexaville:smart-image-picker:1.0.4'
 
     implementation 'pub.devrel:easypermissions:1.1.3'
     implementation('io.socket:socket.io-client:1.0.0') {

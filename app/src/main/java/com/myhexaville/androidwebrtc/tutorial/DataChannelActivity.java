@@ -1,13 +1,18 @@
 package com.myhexaville.androidwebrtc.tutorial;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.databinding.ActivitySampleDataChannelBinding;
+import com.myhexaville.smartimagepicker.ImagePicker;
 
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
@@ -17,6 +22,11 @@ import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -32,7 +42,14 @@ public class DataChannelActivity extends AppCompatActivity {
     private PeerConnectionFactory factory;
     private PeerConnection localPeerConnection, remotePeerConnection;
     private DataChannel localDataChannel;
+    private ImagePicker imagePicker;
 
+    int incomingFileSize;
+    int currentIndexPointer;
+    byte[] imageFileBytes;
+    boolean receivingFile;
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +60,27 @@ public class DataChannelActivity extends AppCompatActivity {
         initializePeerConnections();
 
         connectToOtherPeer();
+
+        imagePicker = new ImagePicker(this,
+                null,
+                imageUri -> {
+                    File imageFile = imagePicker.getImageFile();
+                    int size = (int) imageFile.length();
+                    byte[] bytes = readPickedFileAsBytes(imageFile, size);
+                    sendImage(size, bytes);
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        imagePicker.handleActivityResult(resultCode, requestCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        imagePicker.handlePermission(requestCode, grantResults);
     }
 
     private void initializePeerConnectionFactory() {
@@ -118,7 +156,7 @@ public class DataChannelActivity extends AppCompatActivity {
 
             @Override
             public void onIceConnectionReceivingChange(boolean b) {
-                Log.d(TAG, "onIceConnectionReceivingChange: ");
+//                Log.d(TAG, "onIceConnectionReceivingChange: ");
             }
 
             @Override
@@ -168,8 +206,7 @@ public class DataChannelActivity extends AppCompatActivity {
                     @Override
                     public void onMessage(DataChannel.Buffer buffer) {
                         Log.d(TAG, "onMessage: got message");
-                        String message = byteBufferToString(buffer.data, Charset.defaultCharset());
-                        runOnUiThread(() -> binding.remoteText.setText(message));
+                        readIncomingMessage(buffer.data);
                     }
                 });
             }
@@ -191,15 +228,43 @@ public class DataChannelActivity extends AppCompatActivity {
 
         binding.textInput.setText("");
 
-        ByteBuffer data = stringToByteBuffer(message, Charset.defaultCharset());
+        ByteBuffer data = stringToByteBuffer("-s" + message, Charset.defaultCharset());
         localDataChannel.send(new DataChannel.Buffer(data, false));
     }
 
-    private static ByteBuffer stringToByteBuffer(String msg, Charset charset) {
-        return ByteBuffer.wrap(msg.getBytes(charset));
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private byte[] readPickedFileAsBytes(File imageFile, int size) {
+        byte[] bytes = new byte[size];
+        try {
+            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(imageFile));
+            buf.read(bytes, 0, bytes.length);
+            buf.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bytes;
     }
 
-    private static String byteBufferToString(ByteBuffer buffer, Charset charset) {
+    private void sendImage(int size, byte[] bytes) {
+        int numberOfChunks = size / 64000;
+
+        ByteBuffer meta = stringToByteBuffer("-i" + size, Charset.defaultCharset());
+        localDataChannel.send(new DataChannel.Buffer(meta, false));
+
+        for (int i = 0; i < numberOfChunks; i++) {
+            ByteBuffer wrap = ByteBuffer.wrap(bytes, i * 64000, 64000);
+            localDataChannel.send(new DataChannel.Buffer(wrap, false));
+        }
+        int remainder = size % 64000;
+        if (remainder > 0) {
+            ByteBuffer wrap = ByteBuffer.wrap(bytes, numberOfChunks * 64000, remainder);
+            localDataChannel.send(new DataChannel.Buffer(wrap, false));
+        }
+    }
+
+    private void readIncomingMessage(ByteBuffer buffer) {
         byte[] bytes;
         if (buffer.hasArray()) {
             bytes = buffer.array();
@@ -207,6 +272,38 @@ public class DataChannelActivity extends AppCompatActivity {
             bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
         }
-        return new String(bytes, charset);
+        if (!receivingFile) {
+            String firstMessage = new String(bytes, Charset.defaultCharset());
+            String type = firstMessage.substring(0, 2);
+
+            if (type.equals("-i")) {
+                incomingFileSize = Integer.parseInt(firstMessage.substring(2, firstMessage.length()));
+                imageFileBytes = new byte[incomingFileSize];
+                Log.d(TAG, "readIncomingMessage: incoming file size " + incomingFileSize);
+                receivingFile = true;
+            } else if (type.equals("-s")) {
+                runOnUiThread(() -> binding.remoteText.setText(firstMessage.substring(2, firstMessage.length())));
+            }
+        } else {
+            for (byte b : bytes) {
+                imageFileBytes[currentIndexPointer++] = b;
+            }
+            if (currentIndexPointer == incomingFileSize) {
+                Log.d(TAG, "readIncomingMessage: received all bytes");
+                Bitmap bmp = BitmapFactory.decodeByteArray(imageFileBytes, 0, imageFileBytes.length);
+                receivingFile = false;
+                currentIndexPointer = 0;
+                runOnUiThread(() -> binding.image.setImageBitmap(bmp));
+            }
+        }
     }
+
+    private static ByteBuffer stringToByteBuffer(String msg, Charset charset) {
+        return ByteBuffer.wrap(msg.getBytes(charset));
+    }
+
+    public void pickImage(View view) {
+        imagePicker.openCamera();
+    }
+
 }

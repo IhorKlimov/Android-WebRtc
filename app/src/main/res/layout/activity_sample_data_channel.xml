@@ -55,6 +55,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:text="Pick Image"
+                android:onClick="pickImage"
+                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_width="300dp"
+                android:id="@+id/image"
+                android:scaleType="centerCrop"
+                android:layout_height="300dp" />
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

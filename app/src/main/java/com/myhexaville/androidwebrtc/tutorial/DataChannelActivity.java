@@ -37,6 +37,7 @@ import java.util.ArrayList;
 * */
 public class DataChannelActivity extends AppCompatActivity {
     private static final String TAG = "SampleDataChannelAct";
+    public static final int CHUNK_SIZE = 64000;
 
     private ActivitySampleDataChannelBinding binding;
     private PeerConnectionFactory factory;
@@ -248,18 +249,18 @@ public class DataChannelActivity extends AppCompatActivity {
     }
 
     private void sendImage(int size, byte[] bytes) {
-        int numberOfChunks = size / 64000;
+        int numberOfChunks = size / CHUNK_SIZE;
 
         ByteBuffer meta = stringToByteBuffer("-i" + size, Charset.defaultCharset());
         localDataChannel.send(new DataChannel.Buffer(meta, false));
 
         for (int i = 0; i < numberOfChunks; i++) {
-            ByteBuffer wrap = ByteBuffer.wrap(bytes, i * 64000, 64000);
+            ByteBuffer wrap = ByteBuffer.wrap(bytes, i * CHUNK_SIZE, CHUNK_SIZE);
             localDataChannel.send(new DataChannel.Buffer(wrap, false));
         }
-        int remainder = size % 64000;
+        int remainder = size % CHUNK_SIZE;
         if (remainder > 0) {
-            ByteBuffer wrap = ByteBuffer.wrap(bytes, numberOfChunks * 64000, remainder);
+            ByteBuffer wrap = ByteBuffer.wrap(bytes, numberOfChunks * CHUNK_SIZE, remainder);
             localDataChannel.send(new DataChannel.Buffer(wrap, false));
         }
     }

@@ -59,12 +59,15 @@
             <Button
                 android:layout_width="wrap_content"
                 android:text="Pick Image"
+                android:layout_gravity="center_horizontal"
                 android:onClick="pickImage"
                 android:layout_marginTop="16dp"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:layout_width="300dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
                 android:id="@+id/image"
                 android:scaleType="centerCrop"
                 android:layout_height="300dp" />

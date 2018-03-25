@@ -32,7 +32,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /*
-* Shows how to use PeerConnection to connect clients and send text messages using DataChannel
+* Shows how to use PeerConnection to connect clients and send text messages and images using DataChannel
 * without any networking
 * */
 public class DataChannelActivity extends AppCompatActivity {
